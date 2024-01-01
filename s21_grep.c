@@ -7,6 +7,7 @@
 
 int main(int argc, char **argv) {
   FLAGS flags = {0};
+  flags.patern.patern = NULL;
   FILE *file;
   parser(argc, argv, &flags);
   openFile(argc, argv, &file);
