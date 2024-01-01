@@ -1,15 +1,15 @@
 #ifndef S21_GREP_H
 #define S21_GREP_H
 #include <stdbool.h>
-
+#include <stdio.h>
 typedef struct {
   size_t count;
   char **patern;
-} FLAG_E;
+} Pattern;
 
 typedef struct {
-  FLAG_E e;
-  bool E;
+  Pattern patern;
+  bool e;
   bool i;
   bool v;
   bool c;
@@ -20,5 +20,12 @@ typedef struct {
   bool f;
   bool o;
 } FLAGS;
+
+void printFinish(FLAGS flags, FILE *file);
+void paternCheckFile(char *patern, FILE *file);
+char *readline(FILE *file);
+void openFile(int argc, char **argv, FILE **file);
+void parser(int argc, char **argv, FLAGS *flags);
+void addPaternE(Pattern *E);
 
 #endif
