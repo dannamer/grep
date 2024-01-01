@@ -1,39 +1,34 @@
 #include "s21_grep.h"
 
-#include <stdio.h>
+#include <getopt.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <unistd.h>
-
 
 int main(int argc, char **argv) {
   FLAGS flags = {0};
   FILE *file;
   parser(argc, argv, &flags);
   openFile(argc, argv, &file);
-
 }
 
-void printFinish(FLAGS flags, FILE *file) {
-  
-}
+void printFinish(FLAGS flags, FILE *file) { regex_t regex; }
 
 void openFile(int argc, char **argv, FILE **file) {
-  for (int i = optarg; i < argc, i++) {
-    if(*file = fopen(argv[i], "r") == NULL) {
+  for (int i = optarg; i < argc; i++) {
+    if (*file = fopen(argv[i], "r") == NULL) {
       // ошибка;
     }
   }
 }
 
 void parser(int argc, char **argv, FLAGS *flags) {
-  const char SHORTOPTS[] = "e:f:isvnholc";
   int opt;
-  while ((opt = getopt(argc, argv, SHORTOPTS)) != -1) {
+  while ((opt = getopt(argc, argv, "e:f:isvnholc")) != -1) {
     switch (opt) {
       case 'e':
-        addPaternE(&FLAGS->e);
+        addPaternE(&flags->e);
+        flags->E = true;
         break;
       case 'f':
         flags->f = true;
@@ -65,6 +60,8 @@ void parser(int argc, char **argv, FLAGS *flags) {
       default: /* '?' */
         fprintf(stderr, "Usage: %s [-e value]\n", argv[0]);
         exit(EXIT_FAILURE);
+    }
+    if () {
     }
   }
 }

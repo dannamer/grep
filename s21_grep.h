@@ -9,6 +9,7 @@ typedef struct {
 
 typedef struct {
   FLAG_E e;
+  bool E;
   bool i;
   bool v;
   bool c;
