@@ -4,7 +4,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <unistd.h>
+#include <getopt.h>
 
 
 int main(int argc, char **argv) {
@@ -20,9 +20,9 @@ void printFinish(FLAGS flags, FILE *file) {
 }
 
 void openFile(int argc, char **argv, FILE **file) {
-  for (int i = optarg; i < argc, i++) {
+  for (int i = optarg; i < argc; i++) {
     if(*file = fopen(argv[i], "r") == NULL) {
-      // ошибка;
+      fprintf(stderr, "grep: %s No such file or directory\n", argv[i]);
     }
   }
 }
@@ -33,7 +33,7 @@ void parser(int argc, char **argv, FLAGS *flags) {
   while ((opt = getopt(argc, argv, SHORTOPTS)) != -1) {
     switch (opt) {
       case 'e':
-        addPaternE(&FLAGS->e);
+        addPaternE(&flags->e);
         break;
       case 'f':
         flags->f = true;
@@ -69,9 +69,9 @@ void parser(int argc, char **argv, FLAGS *flags) {
   }
 }
 
-void addPaternE(FLAG_E *E) {
+void addPaternE(Pattern *E) {
   E->patern = realloc(E->patern, (E->count + 1) * sizeof(char *));
   size_t len = strlen(optarg);
-  E->patern[E->count] = realloc(E->patern[E->count], len * sizeof(char) + 1);
+  E->patern[E->count] = malloc(len * sizeof(char) + 1);
   strcpy(E->patern[E->count++], optarg);
 }

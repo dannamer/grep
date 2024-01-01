@@ -5,10 +5,10 @@
 typedef struct {
   size_t count;
   char **patern;
-} FLAG_E;
+} Pattern;
 
 typedef struct {
-  FLAG_E e;
+  Pattern e;
   bool i;
   bool v;
   bool c;
