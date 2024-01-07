@@ -2,13 +2,9 @@
 #define S21_GREP_H
 #include <stdbool.h>
 #include <stdio.h>
-typedef struct {
-  size_t count;
-  char **patern;
-} Pattern;
 
 typedef struct {
-  Pattern patern;
+  char *patern;
   bool e;
   bool i;
   bool v;
@@ -26,6 +22,6 @@ void paternCheckFile(char *patern, FILE *file);
 char *readline(FILE *file);
 void openFile(int argc, char **argv, FILE **file);
 void parser(int argc, char **argv, FLAGS *flags);
-void addPaternE(Pattern *E);
+void addPatern(char **patern);
 
 #endif

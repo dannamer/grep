@@ -6,18 +6,13 @@
 #include <string.h>
 
 int main(int argc, char **argv) {
-  FLAGS flags = {0};
-  flags.patern.patern = NULL;
+  FLAGS flags = {"", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
   FILE *file;
   parser(argc, argv, &flags);
   openFile(argc, argv, &file);
 }
 
-void printFinish(FLAGS flags, FILE *file) {
-  regex_t regex;
-  for (int i = 0; i < flags.patern.count; i++) {
-  }
-}
+void printFinish(FLAGS flags, FILE *file) {}
 
 void paternCheckFile(char *patern, FILE *file) {
   regex_t regex;
@@ -71,8 +66,8 @@ void parser(int argc, char **argv, FLAGS *flags) {
   while ((opt = getopt(argc, argv, "e:f:isvnholc")) != -1) {
     switch (opt) {
       case 'e':
-        addPaternE(&flags->patern);
         flags->e = true;
+        addPatern(&flags->patern);
         break;
       case 'f':
         flags->f = true;
@@ -106,15 +101,13 @@ void parser(int argc, char **argv, FLAGS *flags) {
         exit(EXIT_FAILURE);
     }
   }
-  if (!flags->e) {
-    addPaternE(&flags->patern);
-    optind++;
-  }
 }
 
-void addPaternE(Pattern *E) {
-  E->patern = realloc(E->patern, (E->count + 1) * sizeof(char *));
-  size_t len = strlen(optarg);
-  E->patern[E->count] = malloc(len * sizeof(char) + 1);
-  strcpy(E->patern[E->count++], optarg);
+void addPatern(char **patern) {
+  int len = 0;
+  if (*patern) len = strlen(*patern);
+  int lol = 0;
+  lol = strlen(optarg);
+  *patern = realloc(*patern, len + lol + 4);
+  len ? strcat(strcat(*patern, "\\|"), optarg) : strcpy(patern, optarg);
 }
