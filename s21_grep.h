@@ -15,12 +15,14 @@ typedef struct {
   bool s;
   bool f;
   bool o;
+  bool files;
+  int flag;
 } FLAGS;
 
 void printFinish(FLAGS flags, FILE *file);
-void paternCheckFile(char *patern, FILE *file);
+void paternCheckFile(FLAGS *flags, FILE *file, char *files);
 char *readline(FILE *file);
-void openFile(int argc, char **argv, FILE **file);
+void openFile(int argc, char **argv, FLAGS *flags);
 void parser(int argc, char **argv, FLAGS *flags);
 void addPattern(char **pattern);
 

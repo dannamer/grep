@@ -1,4 +1,5 @@
 #include "s21_grep.h"
+
 #include <getopt.h>
 #include <regex.h>
 #include <stdlib.h>
@@ -6,46 +7,64 @@
 
 int main(int argc, char **argv) {
   FLAGS flags = {0};
-  FILE *file;
   parser(argc, argv, &flags);
-  openFile(argc, argv, &file);
+  openFile(argc, argv, &flags);
 }
 
-void printFinish(FLAGS flags, FILE *file) {
+void paternCheckFile(FLAGS *flags, FILE *file, char *files) {
   regex_t regex;
-}
-
-void paternCheckFile(char *patern, FILE *file) {
-  regex_t regex;
-  if (regcomp(&regex, patern, 0)) {
+  if (regcomp(&regex, flags->patern, 0)) {
     fprintf(stderr, "Could not compile regex\n");
     exit(1);
   }
   char *line;
   while ((line = readline(file)) != NULL) {
-    if (!regexec(&regex, line, 0, NULL, 0)) {
-      printf("%s\n", line);
+    if (flags->v == regexec(&regex, line, 0, NULL, 0)) {
+      if (flags->l) {
+        printf("%s\n", files);
+        break;
+      } else {
+        if (flags->files) {
+          printf("%s:%s\n", files, line);
+        } else {
+          printf("%s\n", line);
+        }
+      }
     }
     free(line);
   }
-  regfree(&regex); // ================
+  regfree(&regex);
+}
+
+void openFile(int argc, char **argv, FLAGS *flags) {
+  FILE *file;
+  for (int i = optind; i < argc; i++) {
+    if (!flags->h && i != argc - 1) flags->files = true;
+    if ((file = fopen(argv[i], "r")) == NULL) {
+      if (!flags->s)
+        fprintf(stderr, "grep: %s No such file or directory\n", argv[i]);
+    } else {
+      paternCheckFile(flags, file, argv[i]);
+      fclose(file);
+    }
+  }
 }
 
 char *readline(FILE *file) {
   char *line = NULL, *tmp = NULL;
   size_t size = 0, index = 0, chunkSize = 100;
   int ch;
-  while ((ch = fgetc(file)) != '\n' && ch != EOF) {
+  while ((ch = fgetc(file)) != EOF) {
     if (index == size) {
-      size += chunkSize;
-      tmp = realloc(line, size);
+      tmp = realloc(line, size += chunkSize);
       if (!tmp) {
         free(line);
         line = NULL;
         break;
-      } 
+      }
       line = tmp;
     }
+    if (ch == '\n') break;
     line[index++] = ch;
   }
   if (line) {
@@ -55,27 +74,23 @@ char *readline(FILE *file) {
   return line;
 }
 
-void openFile(int argc, char **argv, FILE **file) {
-  for (int i = optind; i < argc; i++) {
-    if ((*file = fopen(argv[i], "r")) == NULL) {
-      fprintf(stderr, "grep: %s No such file or directory\n", argv[i]);
-    }
-  }
-}
-
 void parser(int argc, char **argv, FLAGS *flags) {
   int opt;
   while ((opt = getopt(argc, argv, "e:f:isvnholc")) != -1) {
     switch (opt) {
       case 'e':
-        addPattern(&flags->patern);
-        flags->e = true;
+        if (!flags->f) {
+          addPattern(&flags->patern);
+          flags->e = true;
+        }
         break;
       case 'f':
         flags->f = true;
+        addFilePattern(&flags->patern);
         break;
       case 'i':
         flags->i = true;
+        flags->flag = 1;
         break;
       case 's':
         flags->s = true;
@@ -102,11 +117,30 @@ void parser(int argc, char **argv, FLAGS *flags) {
         fprintf(stderr, "Usage: %s [-e value]\n", argv[0]);
     }
   }
+  if (flags->l) {
+    flags->v = flags->n = false;
+  }
+  if (!flags->e || flags->f) {
+    flags->patern = malloc(strlen(argv[optind] + 1));
+    strcpy(flags->patern, argv[optind++]);
+  }
 }
 
-void addPattern(char** pattern){
+addFilePattern(char **patern) {
+  FILE *file = fopen(optarg, "r");
+  if (file == NULL) {
+    fprintf(stderr, "grep: %s No such file or directory\n", optarg);
+  } else {
+    char *line;
+    while ((line = readline(file)) != NULL) {
+      
+    }
+  }
+}
+
+void addPattern(char **pattern) {
   int len = 0;
   if (*pattern) len = strlen(*pattern);
-  *pattern = realloc(*pattern, strlen(optarg)+len+4);
-  (len) ? strcat(strcat(*pattern, "\\|"), optarg) :  strcpy(*pattern, optarg);
+  *pattern = realloc(*pattern, strlen(optarg) + len + 4);
+  len ? strcat(strcat(*pattern, "\\|"), optarg) : strcpy(*pattern, optarg);
 }

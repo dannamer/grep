@@ -37,7 +37,7 @@
             "type": "cppdbg",
             "request": "launch",
             "program": "${fileDirname}/${fileBasenameNoExtension}",
-            "args": ["-eaa", "test"],
+            "args": ["", "main.c", "s21_grep.h"],
             "stopAtEntry": false,
             "cwd": "${fileDirname}",
             "environment": [],
