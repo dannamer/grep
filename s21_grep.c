@@ -1,5 +1,4 @@
 #include "s21_grep.h"
-
 #include <getopt.h>
 #include <regex.h>
 #include <stdlib.h>
@@ -7,7 +6,6 @@
 
 int main(int argc, char **argv) {
   FLAGS flags = {0};
-  flags.patern.patern = NULL;
   FILE *file;
   parser(argc, argv, &flags);
   openFile(argc, argv, &file);
@@ -15,8 +13,6 @@ int main(int argc, char **argv) {
 
 void printFinish(FLAGS flags, FILE *file) {
   regex_t regex;
-  for (int i = 0; i < flags.patern.count; i++) {
-  }
 }
 
 void paternCheckFile(char *patern, FILE *file) {
@@ -32,6 +28,7 @@ void paternCheckFile(char *patern, FILE *file) {
     }
     free(line);
   }
+  regfree(&regex); // ================
 }
 
 char *readline(FILE *file) {
@@ -46,7 +43,7 @@ char *readline(FILE *file) {
         free(line);
         line = NULL;
         break;
-      }
+      } 
       line = tmp;
     }
     line[index++] = ch;
@@ -71,7 +68,7 @@ void parser(int argc, char **argv, FLAGS *flags) {
   while ((opt = getopt(argc, argv, "e:f:isvnholc")) != -1) {
     switch (opt) {
       case 'e':
-        addPaternE(&flags->patern);
+        addPattern(&flags->patern);
         flags->e = true;
         break;
       case 'f':
@@ -103,18 +100,13 @@ void parser(int argc, char **argv, FLAGS *flags) {
         break;
       default: /* '?' */
         fprintf(stderr, "Usage: %s [-e value]\n", argv[0]);
-        exit(EXIT_FAILURE);
     }
-  }
-  if (!flags->e) {
-    addPaternE(&flags->patern);
-    optind++;
   }
 }
 
-void addPaternE(Pattern *E) {
-  E->patern = realloc(E->patern, (E->count + 1) * sizeof(char *));
-  size_t len = strlen(optarg);
-  E->patern[E->count] = malloc(len * sizeof(char) + 1);
-  strcpy(E->patern[E->count++], optarg);
+void addPattern(char** pattern){
+  int len = 0;
+  if (*pattern) len = strlen(*pattern);
+  *pattern = realloc(*pattern, strlen(optarg)+len+4);
+  (len) ? strcat(strcat(*pattern, "\\|"), optarg) :  strcpy(*pattern, optarg);
 }
