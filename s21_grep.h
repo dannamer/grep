@@ -20,6 +20,7 @@ typedef struct {
 } FLAGS;
 
 void printFinish(FLAGS flags, FILE *file);
+void addFilePattern(char **patern);
 void paternCheckFile(FLAGS *flags, FILE *file, char *files);
 char *readline(FILE *file);
 void openFile(int argc, char **argv, FLAGS *flags);

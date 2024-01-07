@@ -120,20 +120,22 @@ void parser(int argc, char **argv, FLAGS *flags) {
   if (flags->l) {
     flags->v = flags->n = false;
   }
-  if (!flags->e || flags->f) {
-    flags->patern = malloc(strlen(argv[optind] + 1));
-    strcpy(flags->patern, argv[optind++]);
-  }
+  // if (!flags->e || flags->f) {
+  //   flags->patern = malloc(strlen(argv[optind] + 1));
+  //   strcpy(flags->patern, argv[optind++]);
+  // }
 }
 
-addFilePattern(char **patern) {
+void addFilePattern(char **patern) {
   FILE *file = fopen(optarg, "r");
   if (file == NULL) {
     fprintf(stderr, "grep: %s No such file or directory\n", optarg);
   } else {
     char *line;
     while ((line = readline(file)) != NULL) {
-      
+      optarg = line;
+      addPattern(patern);
+      free(line);
     }
   }
 }
